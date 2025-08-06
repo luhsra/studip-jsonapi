@@ -110,11 +110,12 @@ class Course(ModelInterface):
     @see https://docs.gitlab.studip.de/entwicklung/docs/jsonapi/courses#schema-courses
     """
 
-    def __init__(self, id, title, subtitle, description):
+    def __init__(self, id, title, subtitle, description, start_semester):
         self.id = id
         self.title = title
         self.subtitle = subtitle
         self.description = description
+        self.start_semester = start_semester
 
     @staticmethod
     def createFromResponse(json):
@@ -135,11 +136,19 @@ class Course(ModelInterface):
         assert "description" in json["attributes"]
         description = json["attributes"]["description"]
 
+        assert "relationships" in json
+
+        assert "start-semester" in json["relationships"]
+        assert "data" in json["relationships"]["start-semester"]
+        assert "id" in json["relationships"]["start-semester"]["data"]
+        start_semester = json["relationships"]["start-semester"]["data"]["id"]
+
         return Course(
             id=id,
             title=title,
             subtitle=subtitle,
             description=description,
+            start_semester=start_semester,
         )
 
 

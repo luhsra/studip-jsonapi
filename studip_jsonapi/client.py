@@ -96,11 +96,15 @@ class Client:
     def getUserById(self, userId):
         return self._apiGetSingle("users/{}".format(userId), User)
 
-    def getUserCourses(self, userId, semesterId="all"):
+    def getUserCourses(self, userId, semesterId=None):
+        """
+        Returns the courses of a given user (by id) while optionally filtering
+        for a given semester (by id).
+        """
         return self._apiGetCollection(
             "users/{}/courses".format(userId),
             Course,
-            params={"filter[semester]": semesterId},
+            params={"filter[semester]": semesterId} if semesterId else {},
         )
 
     ## Semesters
@@ -119,10 +123,26 @@ class Client:
     def getCourseById(self, cid):
         return self._apiGetSingle("courses/{}".format(cid), Course)
 
-    def getCourseMemberships(self, cid):
+    def getCourseMemberships(self, cid, permission=None):
+        """
+        Returns memberships of a given course.
+        Optionally filter by a given permission (e.g. 'tutor', 'dozent').
+        """
         return self._apiGetCollection(
-            "courses/{}/memberships".format(cid), CourseMembership
+            "courses/{}/memberships".format(cid),
+            CourseMembership,
+            params={"filter[permission]": permission} if permission else {}
         )
+
+    def hasUserPermissionInCourse(self, uid, cid, permission):
+        """
+        Returns true if the given user has a given permission in a given course.
+        """
+        for membership in self.getCourseMemberships(cid, permission):
+            if membership.userId == uid:
+                return True
+
+        return False
 
     ## Status groups ("Teilnehmergruppen")
     def getCourseStatusGroups(self, cid):
