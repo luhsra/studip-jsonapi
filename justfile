@@ -1,10 +1,8 @@
 default:
     @just --list
 
-release:
-    #!/usr/bin/env bash
-    read -p "Enter release version (semantic, e.g. 1.2.3): " VERSION
-    set +x
-    git tag --sign -a "v${VERSION}" -m "Released version ${VERSION}"
+release *version:
+    echo "Releasing version {{ version }}"
+    git tag --sign -a "v{{ version }}" -m "Released version {{ version }}"
     git tag -l
-    git push origin "v${VERSION}"
+    git push origin "v{{ version }}"
