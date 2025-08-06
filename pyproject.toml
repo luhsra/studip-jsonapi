@@ -1,6 +1,6 @@
 [project]
 name = "studip_jsonapi"
-version = "0.0.1"
+dynamic = ["version"]
 authors = [
   { name="Tim Hollmann", email="mail@tim-hollmann.de" },
 ]
