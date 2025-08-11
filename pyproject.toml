@@ -1,9 +1,6 @@
 [project]
 name = "studip_jsonapi"
 dynamic = ["version"]
-authors = [
-  { name="Tim Hollmann", email="mail@tim-hollmann.de" },
-]
 description = "Stud.IP JSON:API Client for Python"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -15,8 +12,8 @@ license = "MIT"
 license-files = ["LICEN[CS]E*"]
 
 [project.urls]
-Homepage = "https://github.com/timholl/studip-jsonapi"
-Issues = "https://github.com/timholl/studip-jsonapi/issues"
+Homepage = "https://github.com/luhsra/studip-jsonapi"
+Issues = "https://github.com/luhsra/studip-jsonapi/issues"
 
 [build-system]
 requires = ["setuptools >= 77.0.3"]
