@@ -318,13 +318,13 @@ class CreateAnnouncement:
     content: str
     publicationStart: datetime
     publicationEnd: datetime
-    commentsAllowed: str = False
+    commentsAllowed: bool = False
 
     def __post_init__(self):
-        if not self.oublicationStart:
+        if not self.publicationStart:
             self.publicationStart = datetime.now(timezone.utc)
         if not self.publicationEnd:
-            self.publicationEnd = self.publicationStart + timedelta(days=7)
+            self.publicationEnd = self.publicationStart + timedelta(days=7) # 7 days is the default in the web interface
 
     def toJSON(self):
         return {
