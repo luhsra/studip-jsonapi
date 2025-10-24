@@ -59,7 +59,7 @@ class Client:
         assert "data" in json
         return obj.createFromResponse(json["data"])
 
-    def _apiGetCollection(self, url, obj, limit=10000, params={}):
+    def _apiGetCollection(self, url, obj, limit=10000, params={}, data_field="data"):
         params.update({"page[limit]": limit})
 
         json = self._get(
@@ -67,8 +67,8 @@ class Client:
                 base=self.apiBaseUrl, path=url, params=urlencode(params)
             )
         ).json()
-        assert "data" in json
-        return [obj.createFromResponse(item) for item in json["data"]]
+        assert data_field in json
+        return [obj.createFromResponse(item) for item in json[data_field]]
 
     def _apiPost(self, url, data, respObj=None):
         """Post to a JSON:API compatible URL. Provided payload data must be JSON-encodable."""
@@ -128,10 +128,27 @@ class Client:
         Returns memberships of a given course.
         Optionally filter by a given permission (e.g. 'tutor', 'dozent').
         """
+        params={"filter[permission]": permission} if permission else {}
         return self._apiGetCollection(
             "courses/{}/memberships".format(cid),
             CourseMembership,
-            params={"filter[permission]": permission} if permission else {}
+            params=params,
+            data_field=data_field,
+        )
+
+    def getCourseMembershipUsers(self, cid, permission=None):
+        """
+        Returns member users of a given course.
+        Optionally filter by a given permission (e.g. 'tutor', 'dozent').
+        """
+        params = {"include": "user"}
+        if permission:
+            params["filter[permission]"] = permission
+        return self._apiGetCollection(
+            "courses/{}/memberships".format(cid),
+            User,
+            params=params,
+            data_field="included",
         )
 
     def hasUserPermissionInCourse(self, uid, cid, permission):
