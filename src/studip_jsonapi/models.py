@@ -1,4 +1,5 @@
 from datetime import datetime, timezone, timedelta
+from dataclasses import dataclass
 
 """
 Models according to Stud.IP JSON:API
@@ -11,19 +12,18 @@ class ModelInterface:
         pass
 
 
+@dataclass
 class User(ModelInterface):
     """
     Stud.IP User Model
     @see https://docs.gitlab.studip.de/entwicklung/docs/jsonapi/users#schema
     """
-
-    def __init__(self, id, username, formattedName, familyName, givenName, email):
-        self.id = id
-        self.username = username
-        self.formattedName = formattedName
-        self.familyName = familyName
-        self.givenName = givenName
-        self.email = email
+    id:str
+    username: str
+    formattedName: str
+    familyName: str
+    givenName: str
+    email: str
 
     @staticmethod
     def createFromResponse(json):
@@ -60,17 +60,17 @@ class User(ModelInterface):
         )
 
 
+@dataclass
 class Semester(ModelInterface):
     """
     Stud.IP Semester Model
     @see https://docs.gitlab.studip.de/entwicklung/docs/jsonapi/semesters#schema-semesters
     """
 
-    def __init__(self, id, title, start, end):
-        self.id = id
-        self.title = title
-        self.start = start
-        self.end = end
+    id: str
+    title: str
+    start: str
+    end: str
 
     @staticmethod
     def createFromResponse(json):
@@ -104,18 +104,18 @@ class Semester(ModelInterface):
         )
 
 
+@dataclass
 class Course(ModelInterface):
     """
     Stud.IP Course Model
     @see https://docs.gitlab.studip.de/entwicklung/docs/jsonapi/courses#schema-courses
     """
 
-    def __init__(self, id, title, subtitle, description, start_semester):
-        self.id = id
-        self.title = title
-        self.subtitle = subtitle
-        self.description = description
-        self.start_semester = start_semester
+    id: str
+    title: str
+    subtitle: str
+    description: str
+    start_semester: str
 
     @staticmethod
     def createFromResponse(json):
@@ -152,17 +152,17 @@ class Course(ModelInterface):
         )
 
 
+@dataclass
 class CourseMembership(ModelInterface):
     """
     Stud.IP Course Membership
     @see https://docs.gitlab.studip.de/entwicklung/docs/jsonapi/courses#schema-course-memberships
     """
 
-    def __init__(self, id, courseId, userId, permission):
-        self.id = id
-        self.courseId = courseId
-        self.userId = userId
-        self.permission = permission
+    id: str
+    courseId: str
+    userId: str
+    permission: str
 
     @staticmethod
     def createFromResponse(json):
@@ -193,16 +193,16 @@ class CourseMembership(ModelInterface):
         )
 
 
+@dataclass
 class FileRef(ModelInterface):
     """
     Stud.IP File-Ref Model
     @see https://docs.gitlab.studip.de/entwicklung/docs/jsonapi/files#schema-file-refs
     """
 
-    def __init__(self, id, name, parent):
-        self.id = id
-        self.name = name
-        self.parent = parent
+    id: str
+    name: str
+    parent: str
 
     @staticmethod
     def createFromResponse(json):
@@ -232,17 +232,17 @@ class FileRef(ModelInterface):
         )
 
 
+@dataclass
 class Folder(ModelInterface):
     """
     Stud.IP Folder Model
     @see https://docs.gitlab.studip.de/entwicklung/docs/jsonapi/files#type-folders
     """
 
-    def __init__(self, id, name, type, parent):
-        self.id = id
-        self.name = name
-        self.type = type
-        self.parent = parent
+    id: str
+    name: str
+    type: str
+    parent: str
 
     @staticmethod
     def createFromResponse(json):
@@ -280,15 +280,15 @@ class Folder(ModelInterface):
         )
 
 
+@dataclass
 class StatusGroup(ModelInterface):
     """
     Stud.IP StatusGroup
     This is currently not documented and based on reverse engineering of the source code!
     """
 
-    def __init__(self, id, name):
-        self.id = id
-        self.name = name
+    id : str
+    name : str
 
     @staticmethod
     def createFromResponse(json):
@@ -309,26 +309,22 @@ class StatusGroup(ModelInterface):
         )
 
 
+@dataclass
 class CreateAnnouncement:
     """
     Model used for creating announcements
     """
+    title: str
+    content: str
+    publicationStart: datetime
+    publicationEnd: datetime
+    commentsAllowed: str = False
 
-    def __init__(
-        self,
-        title,
-        content,
-        publicationStart=None,
-        publicationEnd=None,
-        commentsAllowed=False,
-    ):
-        self.title = title
-        self.content = content
-        self.publicationStart = publicationStart or datetime.now(timezone.utc)
-        self.publicationEnd = publicationEnd or self.publicationStart + timedelta(
-            days=7
-        )
-        self.commentsAllowed = commentsAllowed
+    def __post_init__(self):
+        if not self.oublicationStart:
+            self.publicationStart = datetime.now(timezone.utc)
+        if not self.publicationEnd:
+            self.publicationEnd = self.publicationStart + timedelta(days=7)
 
     def toJSON(self):
         return {
@@ -343,15 +339,16 @@ class CreateAnnouncement:
         }
 
 
+@dataclass
 class CreateFile:
     """
     Model used for creating a new empty file and fileRef
     """
 
-    def __init__(self, name, description, license):
-        self.name = name
-        self.description = description
-        self.license = license
+
+    name: str
+    description: str
+    license: str
 
     def toJSON(self):
         return {
@@ -371,16 +368,16 @@ class CreateFile:
         }
 
 
+@dataclass
 class CreateMessage:
     """
     Model used for creating a new message
     @see https://docs.gitlab.studip.de/entwicklung/docs/jsonapi/messages#eine-nachricht-senden
     """
 
-    def __init__(self, subject, body, recipients):
-        self.subject = subject
-        self.body = body
-        self.recipients = recipients
+    subject: str
+    body: str
+    recipients: str
 
     def toJSON(self):
         return {
