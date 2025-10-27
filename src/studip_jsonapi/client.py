@@ -133,7 +133,6 @@ class Client:
             "courses/{}/memberships".format(cid),
             CourseMembership,
             params=params,
-            data_field=data_field,
         )
 
     def getCourseMembershipUsers(self, cid, permission=None):
